@@ -1,13 +1,22 @@
-# Pantry Chef
+# Cook From What You Have
 
-An AI cooking assistant that suggests recipes from the ingredients you have, notes missing ingredients and substitutions, and accounts for dietary restrictions.
+An AI cooking assistant that suggests recipes from your ingredients, with substitutions and dietary preferences in mind.
 
 ## Run locally
 
 Requires Python 3.13+ and [uv](https://docs.astral.sh/uv/).
 
-1. Install dependencies with `uv sync`.
-2. Copy `.env.example` to `.env` and add your `GOOGLE_API_KEY` and `TAVILY_API_KEY`.
-3. Start the app with `uv run streamlit run app.py`.
+1. Get API keys from [Google AI Studio](https://aistudio.google.com/app/apikey) and [Tavily](https://tavily.com/). Their free-tier availability and limits may change.
+2. Install dependencies and create your environment file:
 
-LangSmith tracing is optional; configure its variables in `.env` if you use it.
+	```sh
+	uv sync
+	cp .env.example .env
+	```
+
+3. Add your `GOOGLE_API_KEY` and `TAVILY_API_KEY` to `.env`. Set `LANGSMITH_TRACING=false` to keep optional tracing disabled.
+4. Start the app:
+
+	```sh
+	uv run streamlit run app.py
+	```
