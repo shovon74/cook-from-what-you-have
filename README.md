@@ -14,7 +14,7 @@ Requires Python 3.13+ and [uv](https://docs.astral.sh/uv/).
 	cp .env.example .env
 	```
 
-3. Add your `GOOGLE_API_KEY` and `TAVILY_API_KEY` to `.env`. Set `LANGSMITH_TRACING=false` to keep optional tracing disabled.
+3. Add your `GOOGLE_API_KEY` and `TAVILY_API_KEY` to `.env`. For optional [LangSmith](https://smith.langchain.com/) tracing, add your `LANGSMITH_API_KEY` and set `LANGSMITH_TRACING=true`; otherwise, set it to `false`.
 4. Start the app:
 
 	```sh
