@@ -10,10 +10,13 @@ services:
       - "8501:8501"
     environment:
       - DATABASE_URL=postgresql://chef_user:chef_password@db:5432/personal_chef_db
+      - REDIS_URL=redis://redis:6379/0
     env_file:
       - .env
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     restart: unless-stopped
 
@@ -33,6 +36,19 @@ services:
       test: ["CMD-SHELL", "pg_isready -U chef_user -d personal_chef_db"]
       interval: 5s
       timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # 3. Redis In-Memory Message Broker
+  redis:
+    image: redis:7-alpine
+    container_name: personal-chef-redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
       retries: 5
     restart: unless-stopped
 
