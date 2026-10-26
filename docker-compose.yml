@@ -52,6 +52,26 @@ services:
       retries: 5
     restart: unless-stopped
 
+  # 4. Background AI Worker
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: personal-chef:latest
+    container_name: personal-chef-worker
+    command: ["python", "worker.py"]
+    environment:
+      - DATABASE_URL=postgresql://chef_user:chef_password@db:5432/personal_chef_db
+      - REDIS_URL=redis://redis:6379/0
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
 # Named Volumes for Data Persistence
 volumes:
   postgres_data:
