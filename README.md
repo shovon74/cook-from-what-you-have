@@ -60,7 +60,18 @@ Run the web app:
 uv run streamlit run app.py
 ```
 
-Or the terminal version:
+Or run with **Docker**:
+
+```bash
+# Build and run directly with Docker
+docker build -t personal-chef .
+docker run --env-file .env -p 8501:8501 personal-chef
+
+# Or with Docker Compose
+docker compose up --build
+```
+
+Or run the terminal version:
 
 ```bash
 uv run main.py

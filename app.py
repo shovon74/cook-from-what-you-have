@@ -1,17 +1,19 @@
-"""Streamlit front end for Personal Chef. Run with: uv run streamlit run app.py"""
+"""Streamlit front end for Personal Chef with PostgreSQL persistence."""
 
 import uuid
-
 import streamlit as st
 
+import db
 from agent import ask, build_agent
 
 st.set_page_config(page_title="Personal Chef", page_icon="🍳")
 
+# Ensure PostgreSQL tables exist
+db.init_db()
+
 
 @st.cache_resource
 def get_agent():
-    # Built once and shared across reruns, so the in-memory chat history survives.
     return build_agent()
 
 
@@ -25,17 +27,36 @@ if "messages" not in st.session_state:
 
 agent = get_agent()
 
+# Sidebar: User Profile & Saved History
 with st.sidebar:
     st.header("🍳 Personal Chef")
-    st.write("Tell me what's in your kitchen and I'll suggest a recipe.")
+    
+    # 1. User identification
+    user_name = st.text_input("Your Name", value="Shovon")
+    user_email = st.text_input("Your Email", value="shovon@example.com")
+    
+    # Automatically fetch or register user
+    user_id = db.get_or_create_user(user_name, user_email)
+    
+    st.divider()
     st.button("New chat", on_click=new_chat, use_container_width=True)
+    
+    # 2. Display previous recipes from Postgres
+    st.subheader("📜 Saved Recipes")
+    saved = db.get_user_recipes(user_id)
+    if not saved:
+        st.caption("No recipes saved yet.")
+    for p, r, dt in saved:
+        with st.expander(f"🍽️ {p[:20]}..."):
+            st.caption(f"Saved on {dt.strftime('%b %d, %H:%M')}")
+            st.write(r)
 
 st.title("Personal Chef")
 
 if not st.session_state.messages:
     st.info("Try: *I have eggs, spinach, feta and half an onion.*")
 
-# Replay history (Streamlit reruns the whole script on every interaction).
+# Replay current session messages
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -49,8 +70,11 @@ if prompt := st.chat_input("What ingredients do you have?"):
         with st.spinner("Cooking something up..."):
             try:
                 reply = ask(agent, prompt, st.session_state.thread_id)
+                # 3. Save conversation & recipe to PostgreSQL
+                db.save_recipe(user_id, st.session_state.thread_id, prompt, reply)
             except Exception as e:
                 reply = f"Sorry, something went wrong: {e}"
         st.markdown(reply)
 
     st.session_state.messages.append({"role": "assistant", "content": reply})
+    st.rerun()  # Refresh sidebar to immediately show the newly saved recipe!

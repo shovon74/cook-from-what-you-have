@@ -1,5 +1,34 @@
+# 1. Environment & Secrets
 .env
+.env.*
+!.env.example
+.streamlit/secrets.toml
+
+# 2. AI Assistant & Scratch Files
+CLAUDE.md
+AGENTS.md
+.gemini/
+.agents/
+.cursor/
+
+# 3. Python Virtualenvs & Caching
 .venv/
+env/
 __pycache__/
 *.py[cod]
-.streamlit/secrets.toml
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# 4. IDEs & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 5. OS & Temporary Files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log

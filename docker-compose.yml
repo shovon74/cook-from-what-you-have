@@ -1,0 +1,41 @@
+services:
+  # 1. Web Application
+  personal-chef:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: personal-chef:latest
+    container_name: personal-chef-app
+    ports:
+      - "8501:8501"
+    environment:
+      - DATABASE_URL=postgresql://chef_user:chef_password@db:5432/personal_chef_db
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # 2. PostgreSQL Database
+  db:
+    image: postgres:16-alpine
+    container_name: personal-chef-db
+    environment:
+      POSTGRES_USER: chef_user
+      POSTGRES_PASSWORD: chef_password
+      POSTGRES_DB: personal_chef_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chef_user -d personal_chef_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+# Named Volumes for Data Persistence
+volumes:
+  postgres_data:
