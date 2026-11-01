@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: worker
-          image: personal-chef:latest
+          image: ghcr.io/shovon74/cook-from-what-you-have:latest
           imagePullPolicy: IfNotPresent
           command: ["python", "worker.py"]
           env:
@@ -25,4 +25,3 @@ spec:
           envFrom:
             - secretRef:
                 name: chef-secrets
-

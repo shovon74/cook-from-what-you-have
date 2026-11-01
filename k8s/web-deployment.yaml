@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: web
-          image: personal-chef:latest
+          image: ghcr.io/shovon74/cook-from-what-you-have:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8501
@@ -35,4 +35,3 @@ spec:
               port: 8501
             initialDelaySeconds: 10
             periodSeconds: 15
-
