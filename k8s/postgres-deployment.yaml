@@ -24,6 +24,8 @@ spec:
               value: "chef_password"
             - name: POSTGRES_DB
               value: "personal_chef_db"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
